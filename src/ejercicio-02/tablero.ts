@@ -1,16 +1,28 @@
-enum Ficha { Vacio, Rojo, Amarillo }
+/**
+ * Enum Ficha, nos permite representar el estado de las casillas en el tablero
+ */
+export enum Ficha { Vacia, Roja, Amarilla }
+/**
+ * La variable scanf global, para poder pedir parametor por consola
+ */
 let scanf = require('scanf')
 
-class Tablero {
+/**
+ * Clase que representa el tablero del juego Conecta 4
+ */
+export class Tablero {
   mapa: Ficha[][] = [[], [], [], [], [], [], []]
   constructor() {
     this.mapa.forEach((element: Ficha[]) => {
       for (let i: number = 0; i < 6; i++) {
-        element.push(Ficha.Vacio)
+        element.push(Ficha.Vacia)
       }
     })
   }
 
+  /**
+   * Funcion que da inicio al juego
+   */
   start() {
     let iterator: number = 0
     while (iterator <= 21) { // Numero maximo de fichas que tiene cada jugador
@@ -20,20 +32,20 @@ class Tablero {
       // Funcion par añadir la columna
 
       let option: number = -1
-      while (!this.insertColumn(option, Ficha.Rojo)) {
+      while (!this.insertInColumn(option, Ficha.Roja)) {
         //Pedir la 'option' columna
         console.log("Seleccione una columna: ");
         let valor: number = scanf('%d')
         option = valor - 1
       }
 
-      if (this.checkWin(option, Ficha.Rojo)) {
-        // console.clear();
+      if (this.checkWin(option, Ficha.Roja)) {
+        console.clear();
         console.log(" Win Player 1");
         this.print() // Imprimimos el tablero
         break
       }
-      // console.clear();
+      console.clear();
 
 
       console.log(" - Player 2 -");
@@ -42,7 +54,7 @@ class Tablero {
       // Funcion par añadir la columna
 
       option = -1
-      while (!this.insertColumn(option, Ficha.Amarillo)) {
+      while (!this.insertInColumn(option, Ficha.Amarilla)) {
         //Pedir la 'option' columna
         console.log("Seleccione una columna: ");
         let valor: number = scanf('%d')
@@ -50,24 +62,31 @@ class Tablero {
       }
 
 
-      if (this.checkWin(option, Ficha.Amarillo)) {
-        // console.clear();
+      if (this.checkWin(option, Ficha.Amarilla)) {
+        console.clear();
         console.log(" Win Player 2");
         this.print() // Imprimimos el tablero
         break
       }
-      // console.clear();
+      console.clear();
 
       iterator++ // Incrementamos las fichas usadas
     }
   }
 
   //*****************************************
-
-  insertColumn(col: number, ficha: Ficha): boolean {
+  
+  /**
+   * Funcion que comprueba si se puede insertar una ficha en una columna, en caso que si, lo inserta
+   * @param col Columna a la que queremos insertar la ficha
+   * @param ficha Ficha del jugador
+   * @param mapa El tablero a la cual se quiere insertar
+   * @returns True o False
+   */
+  insertInColumn(col: number, ficha: Ficha): boolean {
     if (col < 0 || col > 6) return false
     for (let i: number = 0; i < 6; i++) {
-      if (this.mapa[col][i] === Ficha.Vacio) {
+      if (this.mapa[col][i] === Ficha.Vacia) {
         this.mapa[col][i] = ficha
         return true
       }
@@ -75,6 +94,12 @@ class Tablero {
     return false
   }
 
+  /**
+   * Funcion que comprueba si ha ganado alguien
+   * @param col Columna de la ultima ficha que se a colocado
+   * @param ficha Ficha que se a colocado, usada para buscar si hay 4 de este tipo conectada
+   * @returns True o False
+   */
   checkWin(col: number, ficha: Ficha): boolean {
     // Me fume 4 porros para hacerlo, esto es practicamente imposible de entender....
     let row: number = 0
@@ -195,14 +220,10 @@ class Tablero {
         break;
     }
 
-    console.log("Columna: " + col + "| Fila: " + row);
-
     do {
 
       if (nuevaFila >= 6 || nuevaColumna < 0)
         break;
-
-      console.log("Nueva Columna: " + nuevaColumna + "| Nueva Fila: " + nuevaFila);
 
       if (encontrado) {
         if (this.mapa[nuevaColumna][nuevaFila] === ficha) {
@@ -230,18 +251,21 @@ class Tablero {
     return false
   }
 
-  print() {
+  /**
+   * Funcion que permite mostrar el estado del tablero
+   */
+  print(): void {
     for (let i: number = 5; i >= 0; i--) {
       let fila: string = ""
       for (let j: number = 0; j < 7; j++) {
         switch (this.mapa[j][i]) {
-          case Ficha.Vacio:
+          case Ficha.Vacia:
             fila += "- "
             break;
-          case Ficha.Rojo:
+          case Ficha.Roja:
             fila += "X "
             break;
-          case Ficha.Amarillo:
+          case Ficha.Amarilla:
             fila += "O "
             break;
 
@@ -253,6 +277,3 @@ class Tablero {
     }
   }
 }
-
-let tmp: Tablero = new Tablero()
-tmp.start()
